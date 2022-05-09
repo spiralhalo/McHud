@@ -35,11 +35,28 @@ import net.minecraft.world.item.Items;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.ref.WeakReference;
+
 public class BucketWarning implements ClientModInitializer {
-	public static final Logger LOGGER = LoggerFactory.getLogger("Bucket Warning'");
+	public static final Logger LOGGER = LoggerFactory.getLogger("Bucket Warning");
 	public static final TranslatableComponent FULL_INVENTORY_WARNING = new TranslatableComponent("sh_mchud.warning.full_inventory");
 
+	private static BucketWarning instance;
+
 	public static void render(PoseStack poseStack, Font font) {
+		if (instance == null) return;
+		instance.guiRenderInner(poseStack, font);
+	}
+
+	private WeakReference<ItemStack> handState = new WeakReference<>(null);
+	private boolean showWarning = false;
+
+	@Override
+	public void onInitializeClient() {
+		instance = new BucketWarning();
+	}
+
+	private void guiRenderInner(PoseStack poseStack, Font font){
 		final Minecraft minecraft = Minecraft.getInstance();
 		if (minecraft == null) return;
 
@@ -47,15 +64,19 @@ public class BucketWarning implements ClientModInitializer {
 		if (player == null) return;
 
 		final ItemStack handItem = minecraft.player.getItemInHand(InteractionHand.MAIN_HAND);
-		if (handItem.is(Items.BUCKET) && handItem.getCount() > 1) {
-			if (player.getInventory().getFreeSlot() == -1) {
-				final int width = font.width(FULL_INVENTORY_WARNING);
-				font.draw(poseStack, FULL_INVENTORY_WARNING, -width / 2f, 0, 0xFFFFFFFF);
+
+		if (handState.get() != handItem) {
+			handState = new WeakReference<>(handItem);
+
+			if (handItem.is(Items.BUCKET) && handItem.getCount() > 1) {
+				// relatively expensive loop operation
+				showWarning = player.getInventory().getFreeSlot() == -1;
 			}
 		}
-	}
 
-	@Override
-	public void onInitializeClient() {
+		if (showWarning) {
+			final int width = font.width(FULL_INVENTORY_WARNING);
+			font.draw(poseStack, FULL_INVENTORY_WARNING, -width / 2f, 0, 0xFFFFFFFF);
+		}
 	}
 }
