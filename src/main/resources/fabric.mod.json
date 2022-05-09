@@ -6,14 +6,14 @@
   "name": "Bucket Warning",
   "description": "Warns bucket usage when inventory is full",
   "authors": [
-    "Me!"
+    "spiralhalo"
   ],
   "contact": {
     "homepage": "https://spiralhalo.github.io/",
     "sources": "https://github.com/spiralhalo/BucketWarning"
   },
 
-  "license": "CC0-1.0",
+  "license": "MIT License",
   "icon": "assets/sh_mchud/icon.png",
 
   "environment": "*",
