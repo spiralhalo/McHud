@@ -25,6 +25,7 @@ package io.github.spiralhalo.mchud;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
@@ -34,8 +35,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.ref.WeakReference;
 
 public class BucketWarning implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Bucket Warning");
@@ -48,12 +47,14 @@ public class BucketWarning implements ClientModInitializer {
 		instance.guiRenderInner(poseStack, font);
 	}
 
-	private WeakReference<ItemStack> handState = new WeakReference<>(null);
+	private final ItemBucketState handState = new ItemBucketState();
 	private boolean showWarning = false;
+	private boolean isDev;
 
 	@Override
 	public void onInitializeClient() {
-		instance = new BucketWarning();
+		instance = this;
+		isDev = FabricLoader.getInstance().isDevelopmentEnvironment();
 	}
 
 	private void guiRenderInner(PoseStack poseStack, Font font){
@@ -65,18 +66,52 @@ public class BucketWarning implements ClientModInitializer {
 
 		final ItemStack handItem = minecraft.player.getItemInHand(InteractionHand.MAIN_HAND);
 
-		if (handState.get() != handItem) {
-			handState = new WeakReference<>(handItem);
-
-			if (handItem.is(Items.BUCKET) && handItem.getCount() > 1) {
-				// relatively expensive loop operation
-				showWarning = player.getInventory().getFreeSlot() == -1;
-			}
+		// doesn't account for inventory changes tho
+		if (handState.stateChanged(handItem)) {
+			showWarning = handState.valid() && inspectInventory(player);
 		}
 
 		if (showWarning) {
 			final int width = font.width(FULL_INVENTORY_WARNING);
 			font.draw(poseStack, FULL_INVENTORY_WARNING, -width / 2f, 0, 0xFFFFFFFF);
+		}
+	}
+
+	private boolean inspectInventory(LocalPlayer player) {
+		// relatively expensive loop operation
+		final boolean result = player.getInventory().getFreeSlot() == -1;
+
+		if (isDev) {
+			LOGGER.info("Inventory was inspected");
+		}
+
+		return result;
+	}
+
+	private static class ItemBucketState {
+		private boolean isBucket = false;
+		private boolean isStacked = false;
+
+		private void set(ItemStack itemStack) {
+			isBucket = itemStack.is(Items.BUCKET);
+			isStacked = itemStack.getCount() > 1;
+		}
+
+		private boolean equal(ItemStack itemStack) {
+			return (itemStack.is(Items.BUCKET) == isBucket) && (itemStack.getCount() > 1 == isStacked);
+		}
+
+		private boolean valid() {
+			return isBucket && isStacked;
+		}
+
+		private boolean stateChanged(ItemStack itemStack) {
+			if (equal(itemStack)) {
+				return false;
+			}
+
+			set(itemStack);
+			return true;
 		}
 	}
 }
