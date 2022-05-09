@@ -49,6 +49,7 @@ public class BucketWarning implements ClientModInitializer {
 
 	private final ItemBucketState handState = new ItemBucketState();
 	private boolean showWarning = false;
+	private long lastChecked;
 	private boolean isDev;
 
 	@Override
@@ -65,9 +66,10 @@ public class BucketWarning implements ClientModInitializer {
 		if (player == null) return;
 
 		final ItemStack handItem = minecraft.player.getItemInHand(InteractionHand.MAIN_HAND);
+		final long time = System.currentTimeMillis(); //idk how to use tick delta
 
-		// doesn't account for inventory changes tho
-		if (handState.stateChanged(handItem)) {
+		if (handState.stateChanged(handItem) || time - lastChecked > 200L) {
+			lastChecked = time;
 			showWarning = handState.valid() && inspectInventory(player);
 		}
 
