@@ -4,13 +4,14 @@
   "version": "${version}",
 
   "name": "Bucket Warning",
-  "description": "Warns bucket usage when inventory is full",
+  "description": "Shows warning if the inventory is full while holding a bucket or glass bottle",
   "authors": [
     "spiralhalo"
   ],
   "contact": {
     "homepage": "https://github.com/spiralhalo/McHud",
-    "sources": "https://github.com/spiralhalo/McHud"
+    "sources": "https://github.com/spiralhalo/McHud",
+    "issues": "https://github.com/spiralhalo/McHud/issues"
   },
 
   "license": "MIT License",

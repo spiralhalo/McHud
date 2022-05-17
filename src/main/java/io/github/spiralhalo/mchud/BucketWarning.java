@@ -91,20 +91,24 @@ public class BucketWarning implements ClientModInitializer {
 	}
 
 	private static class ItemBucketState {
-		private boolean isBucket = false;
+		private boolean isBucketLike = false;
 		private boolean isStacked = false;
 
+		private static boolean bucketLike(ItemStack itemStack) {
+			return itemStack.is(Items.BUCKET) || itemStack.is(Items.GLASS_BOTTLE);
+		}
+
 		private void set(ItemStack itemStack) {
-			isBucket = itemStack.is(Items.BUCKET);
+			isBucketLike = bucketLike(itemStack);
 			isStacked = itemStack.getCount() > 1;
 		}
 
 		private boolean equal(ItemStack itemStack) {
-			return (itemStack.is(Items.BUCKET) == isBucket) && (itemStack.getCount() > 1 == isStacked);
+			return (bucketLike(itemStack) == isBucketLike) && (itemStack.getCount() > 1 == isStacked);
 		}
 
 		private boolean valid() {
-			return isBucket && isStacked;
+			return isBucketLike && isStacked;
 		}
 
 		private boolean stateChanged(ItemStack itemStack) {
