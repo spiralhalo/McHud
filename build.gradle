@@ -12,6 +12,7 @@ group = project.maven_group
 
 repositories {
 	maven {url "https://maven.terraformersmc.com/releases/"}
+	maven {url 'https://maven.gegy.dev'}
 }
 
 dependencies {
@@ -19,7 +20,9 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modRuntimeOnly "com.terraformersmc:modmenu:3.1.1"
+	include modImplementation("dev.lambdaurora:spruceui:3.3.3+1.18")
+	// We can use implementation here because unlike for other mods to depend on this mod
+	modImplementation "com.terraformersmc:modmenu:3.1.1"
 }
 
 processResources {

@@ -21,6 +21,9 @@
   "entrypoints": {
     "client": [
       "io.github.spiralhalo.mchud.BucketWarning"
+    ],
+    "modmenu": [
+      "io.github.spiralhalo.mchud.Configuration"
     ]
   },
   "mixins": [
