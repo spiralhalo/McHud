@@ -20,6 +20,10 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	// Following three needed for Spruce UI
+	include modImplementation(fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version))
+	include modImplementation(fabricApi.module("fabric-rendering-v1", project.fabric_version))
+	include modImplementation(fabricApi.module("fabric-screen-api-v1", project.fabric_version))
 	include modImplementation("dev.lambdaurora:spruceui:3.3.3+1.18")
 	// We can use implementation here because unlike for other mods to depend on this mod
 	modImplementation "com.terraformersmc:modmenu:3.1.1"

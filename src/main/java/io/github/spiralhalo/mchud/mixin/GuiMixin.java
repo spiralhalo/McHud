@@ -25,7 +25,12 @@ package io.github.spiralhalo.mchud.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.spiralhalo.mchud.BucketWarning;
+import io.github.spiralhalo.mchud.Configuration;
+import io.github.spiralhalo.mchud.ext.DebugOverlayExt;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.DebugScreenOverlay;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,14 +40,28 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Gui.class)
 public class GuiMixin {
 	@Shadow
+	@Final
+	private Minecraft minecraft;
+
+	@Shadow
+	@Final
+	private DebugScreenOverlay debugScreen;
+
+	@Shadow
 	private int screenWidth;
+
 	@Shadow
 	private int screenHeight;
+
 	@Inject(method = "render", at = @At("RETURN"), cancellable = false, require = 1)
 	private void afterRender(PoseStack poseStack, float tickDelta, CallbackInfo ci) {
 		poseStack.pushPose();
 		poseStack.translate(screenWidth / 2f, screenHeight - 68 - 12 - 4, 0);
 		BucketWarning.render(poseStack, ((Gui) (Object) this).getFont());
 		poseStack.popPose();
+
+		if (Configuration.co.persistentFpsChart && debugScreen != null && (!this.minecraft.options.renderDebug || !minecraft.options.renderFpsChart)) {
+			((DebugOverlayExt) debugScreen).renderFpsChart(poseStack);
+		}
 	}
 }

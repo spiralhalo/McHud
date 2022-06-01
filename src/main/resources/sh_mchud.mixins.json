@@ -4,6 +4,7 @@
   "package": "io.github.spiralhalo.mchud.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "DebugScreenOverlayMixin",
     "GuiMixin",
     "MutiPlayerGameModeMixin"
   ],

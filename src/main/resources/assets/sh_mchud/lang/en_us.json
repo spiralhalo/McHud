@@ -10,5 +10,8 @@
   "sh_mchud.config.label.cancel_bucket_use_enabled": "Enable Bucket Use Canceling",
   "sh_mchud.config.help.cancel_bucket_use_enabled": "Cancel the action of filling up a bucket or glass bottle when your inventory is full. May interfere with gameplay,§e use at your own risk",
   "sh_mchud.config.label.notify_action_cancellation": "Notify on Action Cancellation",
-  "sh_mchud.config.help.notify_action_cancellation": "Flashes a text notification when an action is canceled by this mod.§e Recommended to be ON"
+  "sh_mchud.config.help.notify_action_cancellation": "Flashes a text notification when an action is canceled by this mod.§e Recommended to be ON",
+  "sh_mchud.config.category.misc": "Misc. Features",
+  "sh_mchud.config.label.persistent_fps_chart": "Persistent FPS Chart",
+  "sh_mchud.config.help.persistent_fps_chart": "Always render the frame rate chart"
 }

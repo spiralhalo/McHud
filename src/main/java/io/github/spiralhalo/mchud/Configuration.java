@@ -9,7 +9,6 @@ import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.background.EmptyBackground;
 import dev.lambdaurora.spruceui.option.SpruceBooleanOption;
 import dev.lambdaurora.spruceui.option.SpruceDoubleOption;
-import dev.lambdaurora.spruceui.option.SpruceIntegerInputOption;
 import dev.lambdaurora.spruceui.option.SpruceSeparatorOption;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
@@ -75,19 +74,23 @@ public class Configuration implements ModMenuApi {
 		}
 	}
 
-	public static class ConfigObject implements Cloneable {
+	public static class ConfigObject {
 		public boolean showBucketUseWarning = true;
 		public int warningOffsetLine = 0;
 		public boolean cancelPlayerActionEnabled = false;
 		public boolean notifyActionCancellation = true;
+		public boolean persistentFpsChart = false;
 
-		@Override
-		public ConfigObject clone() {
-			try {
-				return (ConfigObject) super.clone();
-			} catch (CloneNotSupportedException e) {
-				throw new AssertionError();
-			}
+		public ConfigObject copy() {
+			ConfigObject copy = new ConfigObject();
+
+			copy.showBucketUseWarning = this.showBucketUseWarning;
+			copy.warningOffsetLine = this.warningOffsetLine;
+			copy.cancelPlayerActionEnabled = this.cancelPlayerActionEnabled;
+			copy.notifyActionCancellation = this.notifyActionCancellation;
+			copy.persistentFpsChart = this.persistentFpsChart;
+
+			return copy;
 		}
 	}
 
@@ -98,7 +101,7 @@ public class Configuration implements ModMenuApi {
 		protected ConfigScreen(Screen parent) {
 			super(CONFIG_TITLE);
 			this.parent = parent;
-			this.editing = co.clone();
+			this.editing = co.copy();
 		}
 
 		@Override
@@ -136,6 +139,14 @@ public class Configuration implements ModMenuApi {
 					()->editing.notifyActionCancellation,
 					b->editing.notifyActionCancellation=b,
 					new TranslatableComponent("sh_mchud.config.help.notify_action_cancellation")
+			));
+
+			optionList.addSingleOptionEntry(new SpruceSeparatorOption("sh_mchud.config.category.misc", true, null));
+			optionList.addSingleOptionEntry(new SpruceBooleanOption(
+					"sh_mchud.config.label.persistent_fps_chart",
+					()->editing.persistentFpsChart,
+					b->editing.persistentFpsChart=b,
+					new TranslatableComponent("sh_mchud.config.help.persistent_fps_chart")
 			));
 
 			this.addWidget(optionList);
